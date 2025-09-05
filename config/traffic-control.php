@@ -1,4 +1,5 @@
 <?php
+
 return [
     'enabled' => env('TRAFFIC_CONTROL_ENABLED', true),
     'storage' => env('TRAFFIC_CONTROL_STORAGE', 'redis'),
@@ -13,7 +14,7 @@ return [
         'email' => env('TRAFFIC_CONTROL_ALERT_EMAIL'),
         'threshold' => 1000,
     ],
-    'dashboard' => ['enabled' => true, 'route' => 'traffic-control.dashboard', 'middleware' => ['web', 'auth']],
+    'dashboard' => ['enabled' => true, 'route' => 'traffic-control.dashboard', 'middleware' => ['web']],
     'api_quota' => ['default' => 10000],
     'logging' => ['log_blocked' => true, 'log_sample_rate' => 1],
 ];

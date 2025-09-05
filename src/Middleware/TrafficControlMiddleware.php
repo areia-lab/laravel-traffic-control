@@ -1,4 +1,5 @@
 <?php
+
 namespace AreiaLab\TrafficControl\Middleware;
 
 use Closure;
@@ -54,8 +55,8 @@ class TrafficControlMiddleware
     protected function key(Request $request)
     {
         return $request->user()
-            ? 'tc:user:'.$request->user()->getAuthIdentifier()
-            : 'tc:ip:'.$request->ip();
+            ? 'tc:user:' . $request->user()->getAuthIdentifier()
+            : 'tc:ip:' . $request->ip();
     }
 
     protected function deny(Request $request, $message = 'Blocked', $status = 403, array $headers = [])
