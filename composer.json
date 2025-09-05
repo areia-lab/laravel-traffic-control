@@ -1,0 +1,22 @@
+{
+  "name": "areia-lab/laravel-traffic-control",
+  "description": "Traffic control toolkit for Laravel — advanced throttling, blocking, bot detection, analytics and dashboard.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.0",
+    "illuminate/support": "^9.0|^10.0|^11.0|^12.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "AreiaLab\\TrafficControl\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AreiaLab\\TrafficControl\\TrafficControlServiceProvider"
+      ]
+    }
+  }
+}
