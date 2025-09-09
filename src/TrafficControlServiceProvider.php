@@ -10,32 +10,33 @@ class TrafficControlServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/traffic-control.php', 'traffic-control');
 
-        $this->app->singleton('traffic.control', function ($app) {
-            return new TrafficManager($app);
+        $this->app->singleton('traffic.control', function () {
+            return new TrafficManager();
         });
 
-        $this->app->bind(\AreiaLab\TrafficControl\Alerts\Notifier::class, function ($app) {
-            return new Alerts\Notifier(config('traffic-control.alerts'));
-        });
+        // $this->app->bind(\AreiaLab\TrafficControl\Alerts\Notifier::class, function ($app) {
+        //     return new Alerts\Notifier(config('traffic-control.alerts'));
+        // });
     }
 
     public function boot()
     {
-        $this->publishes([__DIR__ . '/../config/traffic-control.php' => config_path('traffic-control.php')], 'config');
+        $this->publishes([__DIR__ . '/../config/traffic-control.php' => config_path('traffic-control.php')], 'traffic-config');
 
         if (!class_exists('CreateTrafficLogsTable')) {
             $this->publishes([
                 __DIR__ . '/../database/migrations/2025_01_01_000000_create_traffic_logs_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_traffic_logs_table.php')
-            ], 'migrations');
+            ], 'traffic-migrations');
         }
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'traffic-control');
 
         if ($this->app->runningInConsole()) {
             $this->commands([Console\PurgeTrafficLogs::class]);
+
             $this->publishes([
                 __DIR__ . '/../resources/views/dashboard.blade.php' => resource_path('views/vendor/traffic-control/dashboard.blade.php')
-            ], 'views');
+            ], 'traffic-views');
         }
 
         $router = $this->app['router'];
