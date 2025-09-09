@@ -3,13 +3,6 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 mb-0">Traffic Control Dashboard</h1>
-        <a href="{{ route('traffic-control.dashboard') }}" class="btn btn-primary">
-            <i class="bi bi-gear-fill"></i> Control Panel
-        </a>
-    </div>
-
     <div class="card shadow-sm">
         <div class="card-header bg-dark text-white">
             <strong>Recent Traffic Logs</strong>

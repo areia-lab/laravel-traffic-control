@@ -90,8 +90,8 @@ class TrafficControlServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__ . '/../resources/views/dashboard.blade.php' =>
-            resource_path('views/vendor/traffic-control/dashboard.blade.php'),
+            __DIR__ . '/../resources/views' =>
+            resource_path('views/areia/traffic-control'),
         ], 'traffic-views');
     }
 
