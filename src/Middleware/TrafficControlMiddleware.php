@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use AreiaLab\TrafficControl\RateLimiter\AdvancedThrottle;
 use AreiaLab\TrafficControl\Models\TrafficLog;
+use AreiaLab\TrafficControl\TrafficManager;
 
 class TrafficControlMiddleware
 {
@@ -18,19 +19,27 @@ class TrafficControlMiddleware
 
     public function handle(Request $request, Closure $next, $limit = null)
     {
-        if (!config('traffic.enabled')) return $next($request);
+        if (! config('traffic.enabled', true)) {
+            return $next($request);
+        }
 
         $ip = $request->ip();
-        $cfg = config('traffic.ip');
+        $cfg = config('traffic.ip', []);
 
-        if (in_array($ip, $cfg['whitelist'] ?? [])) return $next($request);
+        // Whitelist
+        if (in_array($ip, $cfg['whitelist'] ?? [])) {
+            return $next($request);
+        }
+
+        // Blacklist
         if (in_array($ip, $cfg['blacklist'] ?? [])) {
             $this->logBlocked($request, 'blacklist');
             return $this->deny($request, 'IP blocked');
         }
 
-        if (config('traffic.bot_detection.enabled')) {
-            $ua = $request->userAgent() ?: '';
+        // Bot detection
+        if (config('traffic.bot_detection.enabled', false)) {
+            $ua = $request->userAgent() ?? '';
             foreach (config('traffic.bot_detection.user_agents', []) as $bad) {
                 if (stripos($ua, $bad) !== false) {
                     $this->logBlocked($request, 'bot');
@@ -39,12 +48,13 @@ class TrafficControlMiddleware
             }
         }
 
-        $limitConfig = $limit ? explode(',', $limit) : null;
-        $requests = $limitConfig[0] ?? config('traffic.rate_limits.default.requests');
-        $per = $limitConfig[1] ?? config('traffic.rate_limits.default.per');
+        // Rate limiting
+        $limitConfig = $limit ? explode(',', $limit) : [];
+        $requests = $limitConfig[0] ?? config('traffic.rate_limits.default.requests', 100);
+        $per = $limitConfig[1] ?? config('traffic.rate_limits.default.per', 60);
 
         $key = $this->key($request);
-        if (!$this->throttle->allowRequest($key, (int)$requests, (int)$per)) {
+        if (! $this->throttle->allowRequest($key, (int) $requests, (int) $per)) {
             $this->logBlocked($request, 'rate_limit');
             return $this->deny($request, 'Too Many Requests', 429, ['Retry-After' => $per]);
         }
@@ -59,17 +69,19 @@ class TrafficControlMiddleware
             : 'tc:ip:' . $request->ip();
     }
 
-    protected function deny(Request $request, $message = 'Blocked', $status = 403, array $headers = [])
+    protected function deny(Request $request, string $message = 'Blocked', int $status = 403, array $headers = [])
     {
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json(['message' => $message], $status, $headers);
         }
+
         return response($message, $status, $headers);
     }
 
-    protected function logBlocked(Request $request, $reason = null)
+    protected function logBlocked(Request $request, ?string $reason = null)
     {
-        if (!class_exists(TrafficLog::class)) return;
+        if (! class_exists(TrafficLog::class)) return;
+
         TrafficLog::create([
             'ip' => $request->ip(),
             'path' => $request->path(),

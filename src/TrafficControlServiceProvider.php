@@ -112,8 +112,7 @@ class TrafficControlServiceProvider extends ServiceProvider
      */
     protected function registerMiddleware(): void
     {
-        $this->app->afterResolving('router', function ($router): void {
-            $router->aliasMiddleware('traffic.control', TrafficControlMiddleware::class);
-        });
+        $router = $this->app['router'];
+        $router->aliasMiddleware('traffic.control', TrafficControlMiddleware::class);
     }
 }
