@@ -78,10 +78,12 @@ class TrafficControlServiceProvider extends ServiceProvider
             return;
         }
 
+        // Publish config
         $this->publishes([
             __DIR__ . '/../config/traffic.php' => config_path('traffic.php'),
         ], 'traffic-config');
 
+        // Publish migration (only if not already published)
         if (! class_exists('CreateTrafficLogsTable')) {
             $this->publishes([
                 __DIR__ . '/../database/migrations/2025_01_01_000000_create_traffic_logs_table.php' =>
@@ -89,9 +91,9 @@ class TrafficControlServiceProvider extends ServiceProvider
             ], 'traffic-migrations');
         }
 
+        // Publish views to vendor namespace
         $this->publishes([
-            __DIR__ . '/../resources/views' =>
-            resource_path('views/areia/traffic-control'),
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/traffic-control'),
         ], 'traffic-views');
     }
 

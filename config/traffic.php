@@ -35,6 +35,7 @@ return [
 
     'dashboard' => [
         'enabled' => true,
+        'prefix' => 'traffic-control',
         'route' => 'traffic-control.dashboard',
         'middleware' => ['web']
     ],
