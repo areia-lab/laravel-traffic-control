@@ -1,4 +1,5 @@
 <?php
+
 namespace AreiaLab\TrafficControl\Console;
 
 use Illuminate\Console\Command;

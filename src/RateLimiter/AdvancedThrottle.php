@@ -15,7 +15,7 @@ class AdvancedThrottle
 
     public function allowRequest(string $key, int $maxRequests, int $perSeconds): bool
     {
-        $cacheKey = "traffic:limit:".$key;
+        $cacheKey = "traffic:limit:" . $key;
         $now = time();
         $data = $this->cache->get($cacheKey, ['count' => 0, 'start' => $now]);
 
