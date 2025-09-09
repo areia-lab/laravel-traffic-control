@@ -17,6 +17,6 @@ class GeoBlockRule
 
     protected function lookupCountry($ip)
     {
-        return 'US'; // placeholder
+        return 'US';
     }
 }

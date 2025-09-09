@@ -18,10 +18,10 @@ class TrafficControlMiddleware
 
     public function handle(Request $request, Closure $next, $limit = null)
     {
-        if (!config('traffic-control.enabled')) return $next($request);
+        if (!config('traffic.enabled')) return $next($request);
 
         $ip = $request->ip();
-        $cfg = config('traffic-control.ip');
+        $cfg = config('traffic.ip');
 
         if (in_array($ip, $cfg['whitelist'] ?? [])) return $next($request);
         if (in_array($ip, $cfg['blacklist'] ?? [])) {
@@ -29,9 +29,9 @@ class TrafficControlMiddleware
             return $this->deny($request, 'IP blocked');
         }
 
-        if (config('traffic-control.bot_detection.enabled')) {
+        if (config('traffic.bot_detection.enabled')) {
             $ua = $request->userAgent() ?: '';
-            foreach (config('traffic-control.bot_detection.user_agents', []) as $bad) {
+            foreach (config('traffic.bot_detection.user_agents', []) as $bad) {
                 if (stripos($ua, $bad) !== false) {
                     $this->logBlocked($request, 'bot');
                     return $this->deny($request, 'Bot detected');
@@ -40,8 +40,8 @@ class TrafficControlMiddleware
         }
 
         $limitConfig = $limit ? explode(',', $limit) : null;
-        $requests = $limitConfig[0] ?? config('traffic-control.rate_limits.default.requests');
-        $per = $limitConfig[1] ?? config('traffic-control.rate_limits.default.per');
+        $requests = $limitConfig[0] ?? config('traffic.rate_limits.default.requests');
+        $per = $limitConfig[1] ?? config('traffic.rate_limits.default.per');
 
         $key = $this->key($request);
         if (!$this->throttle->allowRequest($key, (int)$requests, (int)$per)) {

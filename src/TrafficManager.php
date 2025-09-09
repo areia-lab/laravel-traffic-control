@@ -11,7 +11,7 @@ class TrafficManager
     {
         $key = 'traffic_quota_' . $userId . '_' . date('Ym');
         $count = Cache::get($key, 0);
-        $limit = $limit ?: config('traffic-control.api_quota.default', 10000);
+        $limit = $limit ?: config('traffic.api_quota.default', 10000);
 
         if ($count >= $limit) {
             return false;
@@ -23,13 +23,13 @@ class TrafficManager
 
     public static function blockIfIpBlacklisted($ip)
     {
-        $blacklist = config('traffic-control.ip.blacklist', []);
+        $blacklist = config('traffic.ip.blacklist', []);
         return in_array($ip, $blacklist);
     }
 
     public static function logRequest($ip, $path, $blocked = false)
     {
-        if (!config('traffic-control.logging.log_blocked') && $blocked) {
+        if (!config('traffic.logging.log_blocked') && $blocked) {
             return;
         }
 
