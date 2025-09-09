@@ -2,6 +2,7 @@
 
 namespace AreiaLab\TrafficControl\Controllers;
 
+use AreiaLab\TrafficControl\Models\TrafficLog;
 use Illuminate\Routing\Controller;
 
 class LogsController extends Controller
@@ -11,6 +12,7 @@ class LogsController extends Controller
      */
     public function index()
     {
-        return view('traffic-control::logs');
+        $logs = TrafficLog::latest()->limit(50)->get();
+        return view('traffic-control::logs', compact('logs'));
     }
 }

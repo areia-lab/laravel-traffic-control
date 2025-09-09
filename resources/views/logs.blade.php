@@ -8,7 +8,38 @@
             <strong>Traffic Logs</strong>
         </div>
         <div class="card-body">
-            <p class="text-muted">This is the <strong>Logs</strong> page. You can display detailed traffic logs here.</p>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">IP Address</th>
+                            <th scope="col">Path</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Method</th>
+                            <th scope="col">Logged At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($logs as $log)
+                            <tr>
+                                <td>{{ $log->ip }}</td>
+                                <td>{{ $log->path }}</td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">{{ $log->reason }}</span>
+                                </td>
+                                <td>{{ $log->method }}</td>
+                                <td>{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    No traffic logs found 🚫
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 @endsection
