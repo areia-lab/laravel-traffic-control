@@ -26,16 +26,19 @@ class ManageIpController extends Controller
     public function storeBlockIP(Request $request)
     {
         $request->validate(['ip' => 'required|ip']);
-        $ip = $request->input('ip'); // <- Use input from form
+        $ip = $request->input('ip');
 
         $config = $this->loadConfig();
         $blockedIps = $config['ip']['blacklist'] ?? [];
 
         if (!in_array($ip, $blockedIps)) {
             $blockedIps[] = $ip;
-            $config['ip']['blacklist'] = array_values($blockedIps);
-            $this->saveConfig($config);
         }
+
+        // Deduplicate and sort alphabetically
+        $blockedIps = $this->cleanList($blockedIps);
+        $config['ip']['blacklist'] = $blockedIps;
+        $this->saveConfig($config);
 
         return redirect()->back()->with('success', "$ip added to blocked list.");
     }
@@ -48,8 +51,9 @@ class ManageIpController extends Controller
         $config = $this->loadConfig();
         $blockedIps = $config['ip']['blacklist'] ?? [];
         $blockedIps = array_filter($blockedIps, fn($bip) => $bip !== $ip);
-        $config['ip']['blacklist'] = array_values($blockedIps);
 
+        // Deduplicate and sort alphabetically
+        $config['ip']['blacklist'] = $this->cleanList($blockedIps);
         $this->saveConfig($config);
 
         return redirect()->back()->with('success', "$ip removed from blocked list.");
@@ -61,16 +65,19 @@ class ManageIpController extends Controller
     public function storeAllowIP(Request $request)
     {
         $request->validate(['ip' => 'required|ip']);
-        $ip = $request->input('ip'); // <- Use input from form
+        $ip = $request->input('ip');
 
         $config = $this->loadConfig();
         $allowedIps = $config['ip']['whitelist'] ?? [];
 
         if (!in_array($ip, $allowedIps)) {
             $allowedIps[] = $ip;
-            $config['ip']['whitelist'] = array_values($allowedIps);
-            $this->saveConfig($config);
         }
+
+        // Deduplicate and sort alphabetically
+        $allowedIps = $this->cleanList($allowedIps);
+        $config['ip']['whitelist'] = $allowedIps;
+        $this->saveConfig($config);
 
         return redirect()->back()->with('success', "$ip added to allowed list.");
     }
@@ -83,8 +90,9 @@ class ManageIpController extends Controller
         $config = $this->loadConfig();
         $allowedIps = $config['ip']['whitelist'] ?? [];
         $allowedIps = array_filter($allowedIps, fn($aip) => $aip !== $ip);
-        $config['ip']['whitelist'] = array_values($allowedIps);
 
+        // Deduplicate and sort alphabetically
+        $config['ip']['whitelist'] = $this->cleanList($allowedIps);
         $this->saveConfig($config);
 
         return redirect()->back()->with('success', "$ip removed from allowed list.");
@@ -138,5 +146,15 @@ class ManageIpController extends Controller
 
         $lines[] = $indent . ']';
         return implode("\n", $lines);
+    }
+
+    /**
+     * Remove duplicates and sort alphabetically.
+     */
+    protected function cleanList(array $list): array
+    {
+        $list = array_unique($list);
+        sort($list, SORT_STRING);
+        return array_values($list);
     }
 }

@@ -126,6 +126,19 @@ class SettingsController extends Controller
             'alerts.email' => 'TRAFFIC_CONTROL_ALERT_EMAIL',
         ];
 
+        $configPath = config_path('traffic.php');
+        $existingConfig = File::exists($configPath) ? include $configPath : [];
+
+        // Preserve blocklist and whitelist
+        if (isset($existingConfig['ip'])) {
+            if (isset($existingConfig['ip']['blacklist'])) {
+                $settings['ip']['blacklist'] = $existingConfig['ip']['blacklist'];
+            }
+            if (isset($existingConfig['ip']['whitelist'])) {
+                $settings['ip']['whitelist'] = $existingConfig['ip']['whitelist'];
+            }
+        }
+
         $content = "<?php\n\nreturn [\n";
 
         foreach ($settings as $key => $value) {
@@ -134,7 +147,7 @@ class SettingsController extends Controller
 
         $content .= "];\n";
 
-        File::put(config_path('traffic.php'), $content);
+        File::put($configPath, $content);
     }
 
     /**
