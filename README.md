@@ -174,7 +174,18 @@ When requests exceed the configured threshold, Slack or email alerts will trigge
 ### 6. Purging Old Logs
 
 ```bash
-php artisan traffic-control:purge --days=30
+# Purge logs older than 30 days with confirmation
+php artisan traffic-control:purge
+
+# Purge logs older than 90 days without confirmation
+php artisan traffic-control:purge --days=90 --force
+
+# Purge all logs with confirmation
+php artisan traffic-control:purge --all
+
+# Purge all logs without confirmation
+php artisan traffic-control:purge --all --force
+
 ```
 
 Deletes traffic logs older than 30 days.
