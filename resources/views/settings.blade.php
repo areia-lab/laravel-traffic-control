@@ -25,6 +25,14 @@
                             </div>
                         @endif
 
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Success!</strong> {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
                         <form action="{{ route('traffic.settings.update') }}" method="POST">
                             @csrf
                             @method('PUT')
@@ -35,8 +43,8 @@
                                         data-bs-target="#general" type="button">General</button></li>
                                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rate"
                                         type="button">Rate Limits</button></li>
-                                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ip"
-                                        type="button">IP Control</button></li>
+                                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
+                                        data-bs-target="#blocking" type="button">Blocking</button></li>
                                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#bot"
                                         type="button">Bot Detection</button></li>
                                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#alerts"
@@ -143,22 +151,8 @@
                                     </div>
                                 </div>
 
-                                <!-- IP Control -->
-                                <div class="tab-pane fade" id="ip">
-                                    <div class="mb-3">
-                                        <label class="form-label">Blacklist</label>
-                                        <textarea name="ip[blacklist]" rows="2" class="form-control @error('ip.blacklist') is-invalid @enderror">{{ old('ip.blacklist', implode(',', $config['ip']['blacklist'])) }}</textarea>
-                                        @error('ip.blacklist')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Whitelist</label>
-                                        <textarea name="ip[whitelist]" rows="2" class="form-control @error('ip.whitelist') is-invalid @enderror">{{ old('ip.whitelist', implode(',', $config['ip']['whitelist'])) }}</textarea>
-                                        @error('ip.whitelist')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                <!-- Blocking Control -->
+                                <div class="tab-pane fade" id="blocking">
                                     <div class="mb-3">
                                         <label class="form-label">Block TOR</label>
                                         <select name="ip[block_tor]"

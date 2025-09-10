@@ -63,8 +63,6 @@ class SettingsController extends Controller
             'rate_limits.api.requests'     => 'required|integer|min:1',
             'rate_limits.api.per'          => 'required|integer|min:1',
 
-            'ip.blacklist' => 'nullable|string',
-            'ip.whitelist' => 'nullable|string',
             'ip.block_tor' => 'required|boolean',
 
             'bot_detection.enabled'     => 'required|boolean',
@@ -90,9 +88,6 @@ class SettingsController extends Controller
      */
     protected function transformInput(array $validated): array
     {
-        // Comma-separated strings -> arrays
-        $validated['ip']['blacklist'] = $this->toArray($validated['ip']['blacklist'] ?? '');
-        $validated['ip']['whitelist'] = $this->toArray($validated['ip']['whitelist'] ?? '');
         $validated['bot_detection']['user_agents'] = $this->toArray($validated['bot_detection']['user_agents'] ?? '');
 
         // Dashboard middleware can be string or array
