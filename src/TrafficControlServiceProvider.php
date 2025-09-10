@@ -4,7 +4,7 @@ namespace AreiaLab\TrafficControl;
 
 use AreiaLab\TrafficControl\Alerts\Notifier;
 use AreiaLab\TrafficControl\Console\PurgeTrafficLogs;
-use AreiaLab\TrafficControl\Middleware\TrafficControlMiddleware;
+use AreiaLab\TrafficControl\Http\Middleware\TrafficControlMiddleware;
 use AreiaLab\TrafficControl\Models\TrafficLog;
 use AreiaLab\TrafficControl\Observers\TrafficLogObserver;
 use Illuminate\Support\ServiceProvider;

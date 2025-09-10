@@ -1,6 +1,6 @@
 <?php
 
-namespace AreiaLab\TrafficControl\Controllers;
+namespace AreiaLab\TrafficControl\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
