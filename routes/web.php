@@ -20,6 +20,8 @@ Route::middleware(config('traffic.dashboard.middleware', ['web']))
         // Settings
         Route::get('/settings', [SettingsController::class, 'index'])
             ->name('traffic-control.settings');
+        Route::put('/settings/update', [SettingsController::class, 'update'])
+            ->name('traffic-settings.update');
 
         // Alerts
         Route::get('/alerts', [AlertsController::class, 'index'])
