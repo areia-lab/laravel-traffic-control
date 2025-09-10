@@ -23,7 +23,8 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="#">
+                            {{-- Form to add blocked IP --}}
+                            <form method="POST" action="{{ route('traffic-control.block-ip') }}">
                                 @csrf
                                 <div class="input-group mb-3">
                                     <input type="text" name="ip" class="form-control"
@@ -37,7 +38,9 @@
                                     @foreach ($blockedIps as $ip)
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span class="ip-text">{{ $ip }}</span>
-                                            <form method="POST" action="#">
+                                            {{-- Remove blocked IP --}}
+                                            <form method="POST"
+                                                action="{{ route('traffic-control.remove-block-ip', ['ip' => $ip]) }}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="btn btn-sm btn-outline-danger">Remove</button>
@@ -65,7 +68,8 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="#">
+                            {{-- Form to add allowed IP --}}
+                            <form method="POST" action="{{ route('traffic-control.allow-ip') }}">
                                 @csrf
                                 <div class="input-group mb-3">
                                     <input type="text" name="ip" class="form-control"
@@ -79,7 +83,9 @@
                                     @foreach ($allowedIps as $ip)
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span class="ip-text">{{ $ip }}</span>
-                                            <form method="POST" action="#">
+                                            {{-- Remove allowed IP --}}
+                                            <form method="POST"
+                                                action="{{ route('traffic-control.remove-allow-ip', ['ip' => $ip]) }}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="btn btn-sm btn-outline-danger">Remove</button>

@@ -22,6 +22,22 @@ Route::middleware(config('traffic.dashboard.middleware', ['web']))
         Route::get('/manage-ips', [ManageIpController::class, 'index'])
             ->name('traffic.control.manageIp');
 
+        // Block IP
+        Route::post('/block-ip', [ManageIpController::class, 'storeBlockIP'])
+            ->name('traffic-control.block-ip');
+
+        // Remove Blocked IP
+        Route::delete('/block-ip/{ip}', [ManageIpController::class, 'removeBlockIP'])
+            ->name('traffic-control.remove-block-ip');
+
+        // Allow IP
+        Route::post('/allow-ip', [ManageIpController::class, 'storeAllowIP'])
+            ->name('traffic-control.allow-ip');
+
+        // Remove Allowed IP
+        Route::delete('/allow-ip/{ip}', [ManageIpController::class, 'removeAllowIP'])
+            ->name('traffic-control.remove-allow-ip');
+
         // Settings
         Route::get('/settings', [SettingsController::class, 'index'])
             ->name('traffic.control.settings');
