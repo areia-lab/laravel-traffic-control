@@ -15,43 +15,32 @@ class TrafficLogObserver
         // Resolve Notifier from the container
         $notifier = app(Notifier::class);
 
-        // Count all logs (or adjust to a time window if needed)
-        $count = TrafficLog::count();
+        // Count recent logs in the last minute (to prevent excessive alerts)
+        $timeWindow = now()->subMinute();
+        $count = TrafficLog::where('created_at', '>=', $timeWindow)->count();
 
         // Trigger notifier if threshold exceeded
         $notifier->notifyIfThresholdExceeded(
             $count,
-            "Traffic spike detected! Total logs: {$count}"
+            "Traffic spike detected! {$count} requests in the last minute."
         );
     }
 
-    /**
-     * Handle the TrafficLog "updated" event.
-     */
     public function updated(TrafficLog $log): void
     {
         //
     }
 
-    /**
-     * Handle the TrafficLog "deleted" event.
-     */
     public function deleted(TrafficLog $log): void
     {
         //
     }
 
-    /**
-     * Handle the TrafficLog "restored" event.
-     */
     public function restored(TrafficLog $log): void
     {
         //
     }
 
-    /**
-     * Handle the TrafficLog "force deleted" event.
-     */
     public function forceDeleted(TrafficLog $log): void
     {
         //

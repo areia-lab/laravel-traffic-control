@@ -28,14 +28,14 @@ class TrafficControlServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registerObservers();
+
         $this->registerRoutes();
         $this->registerMigrations();
         $this->registerViews();
         $this->registerPublishing();
         $this->registerCommands();
         $this->registerMiddleware();
-
-        $this->registerObservers();
     }
 
     /**
