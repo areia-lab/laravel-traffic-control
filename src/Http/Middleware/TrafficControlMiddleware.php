@@ -1,6 +1,6 @@
 <?php
 
-namespace AreiaLab\TrafficControl\Middleware;
+namespace AreiaLab\TrafficControl\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

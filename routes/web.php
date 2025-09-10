@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use AreiaLab\TrafficControl\Controllers\DashboardController;
-use AreiaLab\TrafficControl\Controllers\LogsController;
-use AreiaLab\TrafficControl\Controllers\SettingsController;
-use AreiaLab\TrafficControl\Controllers\AlertsController;
-use AreiaLab\TrafficControl\Controllers\ManageIpController;
+use AreiaLab\TrafficControl\Http\Controllers\DashboardController;
+use AreiaLab\TrafficControl\Http\Controllers\LogsController;
+use AreiaLab\TrafficControl\Http\Controllers\SettingsController;
+use AreiaLab\TrafficControl\Http\Controllers\AlertsController;
+use AreiaLab\TrafficControl\Http\Controllers\ManageIpController;
 
 Route::middleware(config('traffic.dashboard.middleware', ['web']))
     ->prefix(config('traffic.dashboard.prefix', 'traffic-control'))

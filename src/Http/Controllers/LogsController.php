@@ -1,6 +1,6 @@
 <?php
 
-namespace AreiaLab\TrafficControl\Controllers;
+namespace AreiaLab\TrafficControl\Http\Controllers;
 
 use AreiaLab\TrafficControl\Models\TrafficLog;
 use Illuminate\Routing\Controller;
