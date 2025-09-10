@@ -63,8 +63,6 @@ class SettingsController extends Controller
             'rate_limits.api.requests'     => 'required|integer|min:1',
             'rate_limits.api.per'          => 'required|integer|min:1',
 
-            'ip.blacklist' => 'nullable|string',
-            'ip.whitelist' => 'nullable|string',
             'ip.block_tor' => 'required|boolean',
 
             'bot_detection.enabled'     => 'required|boolean',
@@ -90,9 +88,6 @@ class SettingsController extends Controller
      */
     protected function transformInput(array $validated): array
     {
-        // Comma-separated strings -> arrays
-        $validated['ip']['blacklist'] = $this->toArray($validated['ip']['blacklist'] ?? '');
-        $validated['ip']['whitelist'] = $this->toArray($validated['ip']['whitelist'] ?? '');
         $validated['bot_detection']['user_agents'] = $this->toArray($validated['bot_detection']['user_agents'] ?? '');
 
         // Dashboard middleware can be string or array
@@ -131,6 +126,19 @@ class SettingsController extends Controller
             'alerts.email' => 'TRAFFIC_CONTROL_ALERT_EMAIL',
         ];
 
+        $configPath = config_path('traffic.php');
+        $existingConfig = File::exists($configPath) ? include $configPath : [];
+
+        // Preserve blocklist and whitelist
+        if (isset($existingConfig['ip'])) {
+            if (isset($existingConfig['ip']['blacklist'])) {
+                $settings['ip']['blacklist'] = $existingConfig['ip']['blacklist'];
+            }
+            if (isset($existingConfig['ip']['whitelist'])) {
+                $settings['ip']['whitelist'] = $existingConfig['ip']['whitelist'];
+            }
+        }
+
         $content = "<?php\n\nreturn [\n";
 
         foreach ($settings as $key => $value) {
@@ -139,7 +147,7 @@ class SettingsController extends Controller
 
         $content .= "];\n";
 
-        File::put(config_path('traffic.php'), $content);
+        File::put($configPath, $content);
     }
 
     /**

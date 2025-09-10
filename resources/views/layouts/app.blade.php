@@ -46,26 +46,32 @@
             <h5 class="text-white mb-4">🚦 Traffic Control</h5>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link @if (request()->routeIs('traffic-control.dashboard')) active @endif"
-                        href="{{ route('traffic-control.dashboard') }}">
+                    <a class="nav-link @if (request()->routeIs('traffic.control.dashboard')) active @endif"
+                        href="{{ route('traffic.control.dashboard') }}">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @if (request()->routeIs('traffic-control.logs')) active @endif"
-                        href="{{ route('traffic-control.logs') }}">
+                    <a class="nav-link @if (request()->routeIs('traffic.control.logs')) active @endif"
+                        href="{{ route('traffic.control.logs') }}">
                         <i class="bi bi-list-ul"></i> Logs
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @if (request()->routeIs('traffic-control.settings')) active @endif"
-                        href="{{ route('traffic-control.settings') }}">
+                    <a class="nav-link @if (request()->routeIs('traffic.control.manage-ip')) active @endif"
+                        href="{{ route('traffic.control.manageIp') }}">
+                        <i class="bi bi-globe"></i> Manage IP
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @if (request()->routeIs('traffic.control.settings')) active @endif"
+                        href="{{ route('traffic.control.settings') }}">
                         <i class="bi bi-gear-fill"></i> Settings
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @if (request()->routeIs('traffic-control.alerts')) active @endif"
-                        href="{{ route('traffic-control.alerts') }}">
+                    <a class="nav-link @if (request()->routeIs('traffic.control.alerts')) active @endif"
+                        href="{{ route('traffic.control.alerts') }}">
                         <i class="bi bi-bell-fill"></i> Alerts
                     </a>
                 </li>
