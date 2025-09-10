@@ -95,8 +95,9 @@
                                 <div class="tab-pane fade" id="rate">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <h6>Default</h6>
+                                            <h6>Default (Blade, React.js, Vue.js & Liveware)</h6>
                                             <div class="mb-2">
+                                                <label for="requests">Request</label>
                                                 <input type="number"
                                                     class="form-control @error('rate_limits.default.requests') is-invalid @enderror"
                                                     name="rate_limits[default][requests]"
@@ -106,6 +107,7 @@
                                                 @enderror
                                             </div>
                                             <div class="mb-2">
+                                                <label for="rate_limits">Per (Seccond)</label>
                                                 <input type="number"
                                                     class="form-control @error('rate_limits.default.per') is-invalid @enderror"
                                                     name="rate_limits[default][per]"
@@ -116,8 +118,9 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <h6>API</h6>
+                                            <h6>API (API json response)</h6>
                                             <div class="mb-2">
+                                                <label for="requests">Request</label>
                                                 <input type="number"
                                                     class="form-control @error('rate_limits.api.requests') is-invalid @enderror"
                                                     name="rate_limits[api][requests]"
@@ -127,6 +130,7 @@
                                                 @enderror
                                             </div>
                                             <div class="mb-2">
+                                                <label for="rate_limits">Per (Seccond)</label>
                                                 <input type="number"
                                                     class="form-control @error('rate_limits.api.per') is-invalid @enderror"
                                                     name="rate_limits[api][per]"
