@@ -29,7 +29,7 @@ return [
 
     'alerts' => [
         'slack' => env('TRAFFIC_CONTROL_SLACK_WEBHOOK'),
-        'email' => env('TRAFFIC_CONTROL_ALERT_EMAIL'),
+        'email' => env('TRAFFIC_CONTROL_ALERT_EMAIL', 'admin@example.com'),
         'threshold' => 1000,
     ],
 
