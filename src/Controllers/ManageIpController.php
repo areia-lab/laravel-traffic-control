@@ -4,7 +4,8 @@ namespace AreiaLab\TrafficControl\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
 
 class ManageIpController extends Controller
 {
@@ -24,22 +25,16 @@ class ManageIpController extends Controller
      */
     public function storeBlockIP(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'ip' => 'required|ip'
-        ]);
+        $request->validate(['ip' => 'required|ip']);
+        $ip = $request->input('ip'); // <- Use input from form
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $ip = $request->input('ip');
-        $blockedIps = config('traffic.ip.blacklist', []);
+        $config = $this->loadConfig();
+        $blockedIps = $config['ip']['blacklist'] ?? [];
 
         if (!in_array($ip, $blockedIps)) {
             $blockedIps[] = $ip;
-
-            // Update config or store persistently (file/db)
-            $this->updateConfig('blacklist', $blockedIps);
+            $config['ip']['blacklist'] = array_values($blockedIps);
+            $this->saveConfig($config);
         }
 
         return redirect()->back()->with('success', "$ip added to blocked list.");
@@ -50,10 +45,12 @@ class ManageIpController extends Controller
      */
     public function removeBlockIP($ip)
     {
-        $blockedIps = config('traffic.ip.blacklist', []);
+        $config = $this->loadConfig();
+        $blockedIps = $config['ip']['blacklist'] ?? [];
         $blockedIps = array_filter($blockedIps, fn($bip) => $bip !== $ip);
+        $config['ip']['blacklist'] = array_values($blockedIps);
 
-        $this->updateConfig('blacklist', array_values($blockedIps));
+        $this->saveConfig($config);
 
         return redirect()->back()->with('success', "$ip removed from blocked list.");
     }
@@ -63,21 +60,16 @@ class ManageIpController extends Controller
      */
     public function storeAllowIP(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'ip' => 'required|ip'
-        ]);
+        $request->validate(['ip' => 'required|ip']);
+        $ip = $request->input('ip'); // <- Use input from form
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $ip = $request->input('ip');
-        $allowedIps = config('traffic.ip.whitelist', []);
+        $config = $this->loadConfig();
+        $allowedIps = $config['ip']['whitelist'] ?? [];
 
         if (!in_array($ip, $allowedIps)) {
             $allowedIps[] = $ip;
-
-            $this->updateConfig('whitelist', $allowedIps);
+            $config['ip']['whitelist'] = array_values($allowedIps);
+            $this->saveConfig($config);
         }
 
         return redirect()->back()->with('success', "$ip added to allowed list.");
@@ -88,29 +80,63 @@ class ManageIpController extends Controller
      */
     public function removeAllowIP($ip)
     {
-        $allowedIps = config('traffic.ip.whitelist', []);
+        $config = $this->loadConfig();
+        $allowedIps = $config['ip']['whitelist'] ?? [];
         $allowedIps = array_filter($allowedIps, fn($aip) => $aip !== $ip);
+        $config['ip']['whitelist'] = array_values($allowedIps);
 
-        $this->updateConfig('whitelist', array_values($allowedIps));
+        $this->saveConfig($config);
 
         return redirect()->back()->with('success', "$ip removed from allowed list.");
     }
 
     /**
-     * Helper function to update config dynamically.
-     * WARNING: This only writes to a config cache file for demonstration.
-     * In production, use a database or a proper storage method.
+     * Load traffic.php config.
      */
-    protected function updateConfig(string $key, array $values)
+    protected function loadConfig(): array
     {
         $configFile = config_path('traffic.php');
-        $config = include $configFile;
+        return include $configFile;
+    }
 
-        $config['ip'][$key] = $values;
+    /**
+     * Save config array back to traffic.php using short array syntax.
+     */
+    protected function saveConfig(array $config)
+    {
+        $content = "<?php\n\nreturn " . $this->arrayToPhp($config) . ";\n";
 
-        // Convert array to PHP code
-        $content = "<?php\n\nreturn " . var_export($config, true) . ";\n";
+        File::put(config_path('traffic.php'), $content);
 
-        file_put_contents($configFile, $content);
+        Artisan::call('config:clear');
+        Artisan::call('config:cache');
+    }
+
+    /**
+     * Convert array to PHP code using short array syntax with proper formatting.
+     */
+    protected function arrayToPhp(array $array, int $level = 0): string
+    {
+        $indent = str_repeat('    ', $level);
+        $lines = [];
+        $lines[] = '[';
+
+        foreach ($array as $key => $value) {
+            $keyPart = is_int($key) ? $key : "'$key'";
+            if (is_array($value)) {
+                $lines[] = $indent . '    ' . "$keyPart => " . $this->arrayToPhp($value, $level + 1) . ",";
+            } elseif (is_bool($value)) {
+                $lines[] = $indent . '    ' . "$keyPart => " . ($value ? 'true' : 'false') . ",";
+            } elseif (is_null($value)) {
+                $lines[] = $indent . '    ' . "$keyPart => null,";
+            } elseif (is_int($value) || is_float($value)) {
+                $lines[] = $indent . '    ' . "$keyPart => $value,";
+            } else { // string
+                $lines[] = $indent . '    ' . "$keyPart => '$value',";
+            }
+        }
+
+        $lines[] = $indent . ']';
+        return implode("\n", $lines);
     }
 }
