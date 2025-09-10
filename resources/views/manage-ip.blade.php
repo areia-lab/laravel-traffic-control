@@ -16,8 +16,11 @@
                     <div class="card border-danger mb-4">
                         <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
                             <strong>Blocked IPs</strong>
-                            <input type="text" id="blockedSearch" class="form-control form-control-sm w-50"
-                                placeholder="Search...">
+                            <div class="d-flex align-items-center gap-2 w-50">
+                                <input type="text" id="blockedSearch" class="form-control form-control-sm"
+                                    placeholder="Search...">
+                                <span class="badge bg-light text-dark" id="blockedCount">0</span>
+                            </div>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="#">
@@ -55,8 +58,11 @@
                     <div class="card border-success mb-4">
                         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                             <strong>Allowed IPs</strong>
-                            <input type="text" id="allowedSearch" class="form-control form-control-sm w-50"
-                                placeholder="Search...">
+                            <div class="d-flex align-items-center gap-2 w-50">
+                                <input type="text" id="allowedSearch" class="form-control form-control-sm"
+                                    placeholder="Search...">
+                                <span class="badge bg-light text-dark" id="allowedCount">0</span>
+                            </div>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="#">
@@ -92,67 +98,88 @@
         </div>
     </div>
 
-    {{-- Search filter with highlight + no results + reset on ESC --}}
+    {{-- Search filter with highlight + badge + sort + no results + reset on ESC --}}
     <script>
-        function filterList(inputId, listId, noResultsId) {
+        function filterList(inputId, listId, noResultsId, countId) {
             const input = document.getElementById(inputId);
             const list = document.getElementById(listId);
             const noResults = document.getElementById(noResultsId);
+            const countBadge = document.getElementById(countId);
 
             if (!input || !list) return;
 
+            // Store original index for each item
+            const items = Array.from(list.getElementsByTagName("li"));
+            items.forEach((item, index) => {
+                item.dataset.originalIndex = index;
+            });
+
             function runFilter() {
                 const filter = input.value.toLowerCase().trim();
-                const items = list.getElementsByTagName("li");
-
+                const items = Array.from(list.getElementsByTagName("li"));
                 let matchCount = 0;
+                let matches = [];
+                let nonMatches = [];
 
-                for (let i = 0; i < items.length; i++) {
-                    const ipTextEl = items[i].querySelector(".ip-text");
+                items.forEach(item => {
+                    const ipTextEl = item.querySelector(".ip-text");
                     const ipValue = ipTextEl.dataset.original || ipTextEl.innerText;
-
-                    // Store original text for reset
                     ipTextEl.dataset.original = ipValue;
 
                     if (filter === "") {
-                        items[i].style.display = "";
+                        item.style.display = "";
                         ipTextEl.innerHTML = ipValue;
                         matchCount++;
-                        continue;
+                        return;
                     }
 
                     if (ipValue.toLowerCase().includes(filter)) {
-                        items[i].style.display = "";
+                        item.style.display = "";
                         const regex = new RegExp(`(${filter})`, "gi");
                         ipTextEl.innerHTML = ipValue.replace(regex, `<span class="bg-warning">$1</span>`);
                         matchCount++;
+                        matches.push(item);
                     } else {
-                        items[i].style.display = "none";
+                        item.style.display = "none";
                         ipTextEl.innerHTML = ipValue;
+                        nonMatches.push(item);
                     }
+                });
+
+                // Sorting
+                if (filter !== "") {
+                    // matches first, non-matches hidden after
+                    list.innerHTML = "";
+                    matches.forEach(m => list.appendChild(m));
+                    nonMatches.forEach(m => list.appendChild(m));
+                } else {
+                    // restore original order
+                    list.innerHTML = "";
+                    items.sort((a, b) => a.dataset.originalIndex - b.dataset.originalIndex)
+                        .forEach(item => list.appendChild(item));
                 }
 
                 // Toggle "No results" message
                 if (noResults) {
                     noResults.classList.toggle("d-none", matchCount > 0);
                 }
+
+                // Update badge count
+                if (countBadge) {
+                    countBadge.innerText = matchCount;
+                }
             }
 
-            // Filter while typing
             input.addEventListener("keyup", function(e) {
-                if (e.key === "Escape") {
-                    // Reset on ESC
-                    input.value = "";
-                }
+                if (e.key === "Escape") input.value = "";
                 runFilter();
             });
 
-            // Initial reset
             runFilter();
         }
 
         // Init search filters
-        filterList("blockedSearch", "blockedList", "blockedNoResults");
-        filterList("allowedSearch", "allowedList", "allowedNoResults");
+        filterList("blockedSearch", "blockedList", "blockedNoResults", "blockedCount");
+        filterList("allowedSearch", "allowedList", "allowedNoResults", "allowedCount");
     </script>
 @endsection
