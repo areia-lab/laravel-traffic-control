@@ -25,7 +25,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('traffic-settings.update') }}" method="POST">
+                        <form action="{{ route('traffic.settings.update') }}" method="POST">
                             @csrf
                             @method('PUT')
 
