@@ -7,20 +7,22 @@ use AreiaLab\TrafficControl\Alerts\Notifier;
 
 class TrafficLogObserver
 {
+    public function __construct(private ?Notifier $notifier = null)
+    {
+        $this->notifier ??= app(Notifier::class);
+    }
+
     /**
      * Handle the TrafficLog "created" event.
      */
     public function created(TrafficLog $log)
     {
-        // Resolve Notifier from the container
-        $notifier = app(Notifier::class);
-
-        // Count recent logs in the last minute (to prevent excessive alerts)
+        // Count recent logs in the last minute
         $timeWindow = now()->subMinute();
         $count = TrafficLog::where('created_at', '>=', $timeWindow)->count();
 
         // Trigger notifier if threshold exceeded
-        $notifier->notifyIfThresholdExceeded(
+        $this->notifier->notifyIfThresholdExceeded(
             $count,
             "Traffic spike detected! {$count} requests in the last minute."
         );

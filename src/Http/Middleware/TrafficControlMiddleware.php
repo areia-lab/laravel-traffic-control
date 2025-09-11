@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use AreiaLab\TrafficControl\RateLimiter\AdvancedThrottle;
 use AreiaLab\TrafficControl\Models\TrafficLog;
-use AreiaLab\TrafficControl\TrafficManager;
 
 class TrafficControlMiddleware
 {
