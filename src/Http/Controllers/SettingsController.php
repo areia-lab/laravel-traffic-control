@@ -41,9 +41,6 @@ class SettingsController extends Controller
         // Save settings to config/traffic.php
         $this->saveConfig($settings);
 
-        // Clear config cache
-        Artisan::call('config:clear');
-
         return redirect()
             ->back()
             ->with('success', 'Traffic control settings updated successfully.');
