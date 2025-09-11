@@ -100,7 +100,7 @@
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
                                             <h6>Default</h6>
-                                            <label>Requests</label>
+                                            <label class="form-label">Requests</label>
                                             <input type="number"
                                                 class="form-control @error('rate_limits.default.requests') is-invalid @enderror"
                                                 name="rate_limits[default][requests]"
@@ -109,7 +109,7 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
 
-                                            <label>Per (Second)</label>
+                                            <label class="form-label">Per (Second)</label>
                                             <input type="number"
                                                 class="form-control @error('rate_limits.default.per') is-invalid @enderror"
                                                 name="rate_limits[default][per]"
@@ -120,7 +120,7 @@
                                         </div>
                                         <div class="col-12 col-md-6">
                                             <h6>API</h6>
-                                            <label>Requests</label>
+                                            <label class="form-label">Requests</label>
                                             <input type="number"
                                                 class="form-control @error('rate_limits.api.requests') is-invalid @enderror"
                                                 name="rate_limits[api][requests]"
@@ -129,7 +129,7 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
 
-                                            <label>Per (Second)</label>
+                                            <label class="form-label">Per (Second)</label>
                                             <input type="number"
                                                 class="form-control @error('rate_limits.api.per') is-invalid @enderror"
                                                 name="rate_limits[api][per]"
@@ -145,7 +145,7 @@
                                 <div class="tab-pane fade" id="blocking">
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
-                                            <label>Block TOR</label>
+                                            <label class="form-label">Block TOR</label>
                                             <select name="ip[block_tor]"
                                                 class="form-select @error('ip.block_tor') is-invalid @enderror">
                                                 <option value="1"
@@ -166,7 +166,7 @@
                                 <div class="tab-pane fade" id="bot">
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
-                                            <label>Enable Bot Detection</label>
+                                            <label class="form-label">Enable Bot Detection</label>
                                             <select name="bot_detection[enabled]"
                                                 class="form-select @error('bot_detection.enabled') is-invalid @enderror">
                                                 <option value="1"
@@ -181,7 +181,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-12">
-                                            <label>User Agents</label>
+                                            <label class="form-label">User Agents</label>
                                             <textarea name="bot_detection[user_agents]" rows="2"
                                                 class="form-control @error('bot_detection.user_agents') is-invalid @enderror">{{ old('bot_detection.user_agents', implode(',', $config['bot_detection']['user_agents'])) }}</textarea>
                                             @error('bot_detection.user_agents')
@@ -195,7 +195,7 @@
                                 <div class="tab-pane fade" id="alerts">
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
-                                            <label>Slack Webhook</label>
+                                            <label class="form-label">Slack Webhook</label>
                                             <input type="text"
                                                 class="form-control @error('alerts.slack') is-invalid @enderror"
                                                 name="alerts[slack]"
@@ -205,7 +205,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-12 col-md-6">
-                                            <label>Email</label>
+                                            <label class="form-label">Email</label>
                                             <input type="email"
                                                 class="form-control @error('alerts.email') is-invalid @enderror"
                                                 name="alerts[email]"
@@ -215,7 +215,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-12 col-md-6">
-                                            <label>Threshold</label>
+                                            <label class="form-label">Threshold</label>
                                             <input type="number"
                                                 class="form-control @error('alerts.threshold') is-invalid @enderror"
                                                 name="alerts[threshold]"
@@ -231,7 +231,7 @@
                                 <div class="tab-pane fade" id="dashboard">
                                     <div class="row g-3">
                                         <div class="col-12 col-md-4">
-                                            <label>Enabled</label>
+                                            <label class="form-label">Enabled</label>
                                             <select name="dashboard[enabled]"
                                                 class="form-select @error('dashboard.enabled') is-invalid @enderror">
                                                 <option value="1"
@@ -246,7 +246,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-12 col-md-4">
-                                            <label>Prefix</label>
+                                            <label class="form-label">Prefix</label>
                                             <input type="text"
                                                 class="form-control @error('dashboard.prefix') is-invalid @enderror"
                                                 name="dashboard[prefix]"
@@ -256,7 +256,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-12 col-md-4">
-                                            <label>Middleware</label>
+                                            <label class="form-label">Middleware</label>
                                             <input type="text"
                                                 class="form-control @error('dashboard.middleware') is-invalid @enderror"
                                                 name="dashboard[middleware][]"
@@ -272,7 +272,7 @@
                                 <div class="tab-pane fade" id="api">
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
-                                            <label>Default API Quota</label>
+                                            <label class="form-label">Default API Quota</label>
                                             <input type="number"
                                                 class="form-control @error('api_quota.default') is-invalid @enderror"
                                                 name="api_quota[default]"
@@ -288,7 +288,7 @@
                                 <div class="tab-pane fade" id="logging">
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
-                                            <label>Log Blocked Requests</label>
+                                            <label class="form-label">Log Blocked Requests</label>
                                             <select name="logging[log_blocked]"
                                                 class="form-select @error('logging.log_blocked') is-invalid @enderror">
                                                 <option value="1"
@@ -303,7 +303,7 @@
                                             @enderror
                                         </div>
                                         <div class="col-12 col-md-6">
-                                            <label>Sample Rate</label>
+                                            <label class="form-label">Sample Rate</label>
                                             <input type="number"
                                                 class="form-control @error('logging.log_sample_rate') is-invalid @enderror"
                                                 name="logging[log_sample_rate]"
