@@ -1,7 +1,8 @@
 # Laravel Traffic Control 🚦
 
-**Package Name:** `areia-lab/laravel-traffic-control`  
-**Namespace:** `AreiaLab\TrafficControl`
+![Packagist Version](https://img.shields.io/packagist/v/areia-lab/laravel-traffic-control)
+![Packagist Downloads](https://img.shields.io/packagist/dt/areia-lab/laravel-traffic-control)
+![License](https://img.shields.io/packagist/l/areia-lab/laravel-traffic-control)
 
 A full-featured **traffic control & security toolkit** for Laravel.  
 It provides **rate limiting, IP black/whitelisting, bot detection, request quotas, alerts, logging, and a monitoring dashboard**.
@@ -24,7 +25,7 @@ It provides **rate limiting, IP black/whitelisting, bot detection, request quota
 
 ## 📦 Installation
 
-Require the package via Composer:
+Install via Composer:
 
 ```bash
 composer require areia-lab/laravel-traffic-control
@@ -33,27 +34,37 @@ composer require areia-lab/laravel-traffic-control
 Publish configuration and migrations:
 
 ```bash
-php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="config"
-php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="traffic-config"
+php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="traffic-migrations"
 php artisan migrate
 ```
 
 (Optional) Publish dashboard views:
 
 ```bash
-php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="views"
+php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="traffic-views"
 ```
+
+---
+
+## 📸 Screenshots
+
+<div style="display:flex; gap:1rem; flex-wrap:wrap;">
+<img src="./public/images/dashboard.png" alt="Dashboard" style="width:300px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+<img src="./public/images/manage-ip.png" alt="Manage IP" style="width:300px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+<img src="./public/images/settings.png" alt="Settings" style="width:300px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+</div>
 
 ---
 
 ## ⚙️ Configuration
 
-Edit `config/traffic-control.php`:
+Edit `config/traffic.php`:
 
 ```php
 return [
-    'enabled' => true,
-    'storage' => 'redis', // redis | cache | database
+    'enabled' => env('TRAFFIC_CONTROL_ENABLED', true), // Enable/disable globally
+    'storage' => env('TRAFFIC_CONTROL_STORAGE', 'redis'), // redis | database | file
 
     'rate_limits' => [
         'default' => ['requests' => 60, 'per' => 60],
@@ -61,30 +72,30 @@ return [
     ],
 
     'ip' => [
-        'blacklist' => ['123.45.67.89'],
-        'whitelist' => ['10.0.0.1'],
         'block_tor' => true,
+        'blacklist' => [],
+        'whitelist' => [],
     ],
 
     'bot_detection' => [
         'enabled' => true,
-        'user_agents' => ['curl', 'scrapy', 'bad-bot'],
+        'user_agents' => ['bad-bot'],
     ],
 
     'alerts' => [
         'slack' => env('TRAFFIC_CONTROL_SLACK_WEBHOOK'),
-        'email' => env('TRAFFIC_CONTROL_ALERT_EMAIL'),
-        'threshold' => 1000,
+        'email' => env('TRAFFIC_CONTROL_ALERT_EMAIL', 'admin@example.com'),
+        'threshold' => env('TRAFFIC_CONTROL_ALERT_THRESHOLD', 1000),
     ],
 
     'dashboard' => [
         'enabled' => true,
-        'route' => 'traffic-control.dashboard',
-        'middleware' => ['web', 'auth'],
+        'prefix' => 'traffic-control',
+        'middleware' => ['web'],
     ],
 
     'api_quota' => [
-        'default' => 10000, // requests per month per user
+        'default' => 10000,
     ],
 
     'logging' => [
@@ -98,26 +109,24 @@ return [
 
 ## 🚀 Usage
 
-### 1. Apply Middleware
+### Middleware
 
-Apply globally in `app/Http/Kernel.php` or per-route:
+Apply globally in `app/Http/Kernel.php` or per route:
 
 ```php
-// Default
 Route::middleware(['traffic.control'])->group(function () {
     Route::get('/api/data', [ApiController::class, 'index']);
 });
+```
 
-// Custom limits: requests,seconds (e.g., 200 req per 60 seconds)
+Custom per-route limit:
+
+```php
 Route::get('/heavy', [HeavyController::class, 'index'])
     ->middleware('traffic.control:200,60');
 ```
 
----
-
-### 2. Role or Plan-Based Limits
-
-You can extend the keying logic in middleware or via `TrafficManager`:
+### Role/Plan-Based Limits
 
 ```php
 if ($user = $request->user()) {
@@ -126,12 +135,7 @@ if ($user = $request->user()) {
 }
 ```
 
----
-
-### 3. API Quotas
-
-Track per-user quotas (monthly/daily).  
-In your service/controller:
+### API Quotas
 
 ```php
 use AreiaLab\TrafficControl\Facades\TrafficManager;
@@ -141,11 +145,7 @@ if (!TrafficManager::checkQuota($user->id)) {
 }
 ```
 
----
-
-### 4. Dashboard
-
-Quick route to view recent blocked traffic:
+### Dashboard
 
 ```php
 Route::get('/admin/traffic', function () {
@@ -154,49 +154,29 @@ Route::get('/admin/traffic', function () {
 })->middleware(['web', 'auth'])->name('traffic-control.dashboard');
 ```
 
-![Dashboard Example](docs/dashboard-example.png) <!-- optional screenshot -->
+### Alerts
 
----
-
-### 5. Alerts
-
-Set `.env`:
+Set `.env` variables:
 
 ```
 TRAFFIC_CONTROL_SLACK_WEBHOOK=https://hooks.slack.com/services/XXXX
 TRAFFIC_CONTROL_ALERT_EMAIL=admin@example.com
 ```
 
-When requests exceed the configured threshold, Slack or email alerts will trigger.
-
----
-
-### 6. Purging Old Logs
+### Purging Logs
 
 ```bash
-# Purge logs older than 30 days with confirmation
-php artisan traffic-control:purge
-
-# Purge logs older than 90 days without confirmation
+php artisan traffic-control:purge               # Purge logs older than 30 days
 php artisan traffic-control:purge --days=90 --force
-
-# Purge all logs with confirmation
 php artisan traffic-control:purge --all
-
-# Purge all logs without confirmation
 php artisan traffic-control:purge --all --force
-
 ```
-
-Deletes traffic logs older than 30 days.
 
 ---
 
 ## 🧩 Extending
 
-### Custom Rules
-
-Create a rule under `src/Rules/`:
+Create custom rules under `src/Rules/`:
 
 ```php
 namespace AreiaLab\TrafficControl\Rules;
@@ -216,23 +196,20 @@ class GeoBlockRule
 
     protected function lookupCountry($ip)
     {
-        // integrate with GeoIP here
         return 'US';
     }
 }
 ```
 
-Register your rule in `TrafficManager` or a custom middleware.
-
 ---
 
 ## 🛠 Roadmap
 
-- [ ] Redis sliding window / leaky bucket limiter
-- [ ] GeoIP/TOR/VPN detection integration
-- [ ] Charts (Chart.js / Recharts) for dashboard
-- [ ] Plan-based quota & billing hooks
-- [ ] AI anomaly detection
+- Redis sliding window / leaky bucket limiter
+- GeoIP/TOR/VPN detection integration
+- Charts for dashboard
+- Plan-based quota & billing hooks
+- AI anomaly detection
 
 ---
 

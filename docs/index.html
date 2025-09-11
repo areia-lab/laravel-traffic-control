@@ -149,15 +149,51 @@
             <!-- Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 content">
                 <h1 id="top">Laravel Traffic Control 🚦</h1>
-                <p><strong>Namespace:</strong> <code>AreiaLab\TrafficControl</code></p>
+                <p><strong>Description:</strong> Traffic control toolkit for Laravel — advanced throttling, blocking,
+                    bot
+                    detection, analytics, and dashboard.</p>
 
                 <hr>
+
+                <h2 id="screenshots">📸 Screenshots</h2>
+                <p>Overview of dashboard, IP management, and settings pages:</p>
+
+                <div class="row g-3">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card shadow-sm border-0">
+                            <img src="../public/images/dashboard.png" class="card-img-top img-fluid rounded"
+                                alt="Dashboard">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Dashboard</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card shadow-sm border-0">
+                            <img src="../public/images/manage-ip.png" class="card-img-top img-fluid rounded"
+                                alt="Manage IP">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Manage IP</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card shadow-sm border-0">
+                            <img src="../public/images/settings.png" class="card-img-top img-fluid rounded"
+                                alt="Settings">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Settings</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <h2 id="install">Installation</h2>
                 <pre><code>composer require areia-lab/laravel-traffic-control</code></pre>
 
                 <h3 id="publish">Publish Configuration and Migrations</h3>
-                <pre><code>php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="config"
-php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="migrations"
+                <pre><code>php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="traffic-config"
+php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="traffic-migrations"
 php artisan migrate
 
 # Optional dashboard views
