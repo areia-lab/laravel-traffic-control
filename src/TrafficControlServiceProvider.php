@@ -2,7 +2,6 @@
 
 namespace AreiaLab\TrafficControl;
 
-use AreiaLab\TrafficControl\Alerts\Notifier;
 use AreiaLab\TrafficControl\Console\PurgeTrafficLogs;
 use AreiaLab\TrafficControl\Http\Middleware\TrafficControlMiddleware;
 use AreiaLab\TrafficControl\Models\TrafficLog;
@@ -18,9 +17,7 @@ class TrafficControlServiceProvider extends ServiceProvider
     {
         $this->mergeConfig();
 
-        $this->app->singleton('traffic.control', fn(): TrafficManager => new TrafficManager());
-
-        $this->app->bind(Notifier::class, fn(): Notifier => new Notifier());
+        $this->app->singleton('traffic-control', fn(): TrafficManager => new TrafficManager());
     }
 
     /**
@@ -36,6 +33,14 @@ class TrafficControlServiceProvider extends ServiceProvider
         $this->registerPublishing();
         $this->registerCommands();
         $this->registerMiddleware();
+    }
+
+    /**
+     * Register package observers from the model.
+     */
+    protected function registerObservers(): void
+    {
+        TrafficLog::observe(TrafficLogObserver::class);
     }
 
     /**
@@ -118,13 +123,5 @@ class TrafficControlServiceProvider extends ServiceProvider
     {
         $router = $this->app['router'];
         $router->aliasMiddleware('traffic.control', TrafficControlMiddleware::class);
-    }
-
-    /**
-     * Register package observers from the model.
-     */
-    protected function registerObservers(): void
-    {
-        TrafficLog::observe(TrafficLogObserver::class);
     }
 }

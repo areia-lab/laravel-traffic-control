@@ -35,14 +35,11 @@ class SettingsController extends Controller
             'TRAFFIC_CONTROL_STORAGE'       => $settings['storage'],
             'TRAFFIC_CONTROL_SLACK_WEBHOOK' => $settings['alerts']['slack'],
             'TRAFFIC_CONTROL_ALERT_EMAIL'   => $settings['alerts']['email'],
+            'TRAFFIC_CONTROL_ALERT_THRESHOLD'   => $settings['alerts']['threshold'],
         ]);
 
         // Save settings to config/traffic.php
         $this->saveConfig($settings);
-
-        // Clear and rebuild config cache
-        Artisan::call('config:clear');
-        Artisan::call('config:cache');
 
         return redirect()
             ->back()
@@ -107,7 +104,6 @@ class SettingsController extends Controller
         $validated['rate_limits']['default']['per'] = (int) $validated['rate_limits']['default']['per'];
         $validated['rate_limits']['api']['requests'] = (int) $validated['rate_limits']['api']['requests'];
         $validated['rate_limits']['api']['per'] = (int) $validated['rate_limits']['api']['per'];
-        $validated['alerts']['threshold'] = (int) $validated['alerts']['threshold'];
         $validated['api_quota']['default'] = (int) $validated['api_quota']['default'];
         $validated['logging']['log_sample_rate'] = (int) $validated['logging']['log_sample_rate'];
 
@@ -124,6 +120,7 @@ class SettingsController extends Controller
             'storage' => 'TRAFFIC_CONTROL_STORAGE',
             'alerts.slack' => 'TRAFFIC_CONTROL_SLACK_WEBHOOK',
             'alerts.email' => 'TRAFFIC_CONTROL_ALERT_EMAIL',
+            'alerts.threshold' => 'TRAFFIC_CONTROL_ALERT_THRESHOLD',
         ];
 
         $configPath = config_path('traffic.php');
