@@ -92,15 +92,12 @@ class TrafficControlServiceProvider extends ServiceProvider
             __DIR__ . '/../config/traffic.php' => config_path('traffic.php'),
         ], 'traffic-config');
 
-        // Publish migration (only if not already published)
-        if (! class_exists('CreateTrafficLogsTable')) {
-            $this->publishes([
-                __DIR__ . '/../database/migrations/2025_01_01_000000_create_traffic_logs_table.php' =>
-                database_path('migrations/' . now()->format('Y_m_d_His') . '_create_traffic_logs_table.php'),
-            ], 'traffic-migrations');
-        }
+        // Publish migrations
+        $this->publishes([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], 'traffic-migrations');
 
-        // Publish views to vendor namespace
+        // Publish views
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/traffic-control'),
         ], 'traffic-views');
