@@ -34,8 +34,8 @@ composer require areia-lab/laravel-traffic-control
 Publish configuration and migrations:
 
 ```bash
-php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="config"
-php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="traffic-config"
+php artisan vendor:publish --provider="AreiaLab\TrafficControl\TrafficControlServiceProvider" --tag="traffic-migrations"
 php artisan migrate
 ```
 
